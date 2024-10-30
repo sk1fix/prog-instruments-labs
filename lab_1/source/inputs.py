@@ -1,5 +1,6 @@
-from gamemaster import *
 from tkinter import *
+
+from gamemaster import *
 
 
 class InputSystem:

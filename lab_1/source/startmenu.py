@@ -1,5 +1,7 @@
-from inputs import *
 import sys
+
+from inputs import *
+
 
 menufont = ('Arial', int(windowsize / fontsizefactor), 'normal')
 titlefont = ('Comic Sans MS', int(windowsize / (fontsizefactor * 0.5)), 'normal')

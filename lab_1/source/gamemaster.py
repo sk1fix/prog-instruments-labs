@@ -1,8 +1,9 @@
+import random
+
 from Settings import *
 from Renderer import *
 from PlayField import *
 from Player import *
-import random
 
 win = t.Screen()
 canvas = win.getcanvas()
