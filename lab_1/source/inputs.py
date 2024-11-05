@@ -4,220 +4,229 @@ from gamemaster import *
 
 
 class InputSystem:
-    rollbtn = None
-    movebtn = None
-    resultscreen = None
+    roll_btn = None
+    move_btn = None
+    result_screen = None
 
     master = None
     # master = GameMaster(4, 4, 3)
-    # master.inmenu = False
+    # master.in_menu = False
 
-    def __init__(self, resultscreen):
-        win.onkey(lambda key="Return": self.inputhandler(key), "Return")
-        win.onkey(lambda key="Space": self.inputhandler(key), "space")
-        win.onkey(lambda key="Left": self.inputhandler(key), "Left")
-        win.onkey(lambda key="Right": self.inputhandler(key), "Right")
-        self.rollbtn = Button(canvas.master, text="Hoď", command=lambda key="Space": self.inputhandler(key), font=gamefont)
-        self.movebtn = Button(canvas.master, text="Choď", command=lambda key="Return": self.inputhandler(key), font=gamefont)
-        self.rollbtn.place(relx=0.7, rely=0.05, anchor=CENTER)
-        self.movebtn.place(relx=0.3, rely=0.05, anchor=CENTER)
-        self.resultscreen = resultscreen
+    def __init__(self, result_screen):
+        win.onkey(lambda key="Return": self.input_handler(key), "Return")
+        win.onkey(lambda key="Space": self.input_handler(key), "space")
+        win.onkey(lambda key="Left": self.input_handler(key), "Left")
+        win.onkey(lambda key="Right": self.input_handler(key), "Right")
+        self.roll_btn = Button(
+            canvas.master, text="Hoď", command=lambda key="Space": self.input_handler(key), font=game_font)
+        self.move_btn = Button(canvas.master, text="Choď",
+                               command=lambda key="Return": self.input_handler(key), font=game_font)
+        self.roll_btn.place(relx=0.7, rely=0.05, anchor=CENTER)
+        self.move_btn.place(relx=0.3, rely=0.05, anchor=CENTER)
+        self.result_screen = result_screen
 
-        win.onclick(self.mouseselectpiece)
+        win.onclick(self.mouse_select_piece)
 
         win.listen()
 
-    def inputhandler(self, key):
-        if self.master.inmenu is False and self.master.currentGameState != GAMESTATE_AWAIT:
+    def input_handler(self, key):
+        if self.master.in_menu is False and self.master.current_game_state != GAMESTATE_AWAIT:
             match key:
                 case "Left":
-                    self.cyclepiecesleft()
+                    self.cycle_pieces_left()
                 case "Right":
-                    self.cyclepiecesright()
+                    self.cycle_pieces_right()
                 case "Return":
                     if self.master.roll == 0:
                         return
 
-                    self.moveattempt(self.master.players[self.master.playerchoice].playerPieces[self.master.piecechoice])
+                    self.move_attempt(
+                        self.master.players[self.master.player_choice].player_pieces[self.master.piece_choice])
                 case "Space":
                     self.roll()
-                    if self.master.currentGameState == GAMESTATE_GETPIECEOUT:
-                        self.moveattempt(self.master.players[self.master.playerchoice].playerPieces[self.master.piecechoice])
+                    if self.master.current_game_state == GAMESTATE_GETPIECEOUT:
+                        self.move_attempt(
+                            self.master.players[self.master.player_choice].player_pieces[self.master.piece_choice])
 
-        self.master.refreshui()
+        self.master.refresh_ui()
 
-    def mouseselectpiece(self, x, y):
+    def mouse_select_piece(self, x, y):
         position = (int(x), int(y))
 
-        piecelist = self.master.players[self.master.playerchoice].playerPieces
+        piecelist = self.master.players[self.master.player_choice].player_pieces
         for pi in range(len(piecelist)):
             if position == piecelist[pi].position:
-                self.master.piecechoice = pi
+                self.master.piece_choice = pi
                 Renderer().highlight((position[0] + 0.5, position[1] + 0.5))
-                self.master.refreshui()
+                self.master.refresh_ui()
                 return
 
-    def cyclepiecesright(self):
-        if self.master.piecechoice + 1 > self.master.settings.pieceamount - 1:
-            self.master.piecechoice = 0
+    def cycle_pieces_right(self):
+        if self.master.piece_choice + 1 > self.master.settings.piece_amount - 1:
+            self.master.piece_choice = 0
         else:
-            self.master.piecechoice += 1
+            self.master.piece_choice += 1
 
-        pos = self.master.players[self.master.playerchoice].playerPieces[self.master.piecechoice].position
+        pos = self.master.players[self.master.player_choice].player_pieces[self.master.piece_choice].position
         Renderer().highlight((pos[0] + 0.5, pos[1] + 0.5))
-        print(self.master.piecechoice)
+        print(self.master.piece_choice)
 
-    def cyclepiecesleft(self):
-        if self.master.piecechoice - 1 < 0:
-            self.master.piecechoice = self.master.settings.pieceamount - 1
+    def cycle_pieces_left(self):
+        if self.master.piece_choice - 1 < 0:
+            self.master.piece_choice = self.master.settings.piece_amount - 1
         else:
-            self.master.piecechoice -= 1
+            self.master.piece_choice -= 1
 
-        pos = self.master.players[self.master.playerchoice].playerPieces[self.master.piecechoice].position
+        pos = self.master.players[self.master.player_choice].player_pieces[self.master.piece_choice].position
         Renderer().highlight((pos[0] + 0.5, pos[1] + 0.5))
-        print(self.master.piecechoice)
+        print(self.master.piece_choice)
 
     def roll(self):
-        if self.master.currentGameState != GAMESTATE_MOVE:
+        if self.master.current_game_state != GAMESTATE_MOVE:
             self.master.roll = random.randrange(1, 7)
-            self.master.refreshui()
+            self.master.refresh_ui()
 
-        if self.master.currentGameState != GAMESTATE_GETPIECEOUT:
-            self.master.currentGameState = GAMESTATE_MOVE
+        if self.master.current_game_state != GAMESTATE_GETPIECEOUT:
+            self.master.current_game_state = GAMESTATE_MOVE
 
-    def debugroll(self, roll):
-        if self.master.currentGameState != GAMESTATE_MOVE:
+    def debug_roll(self, roll):
+        if self.master.current_game_state != GAMESTATE_MOVE:
             self.master.roll = roll
-            self.master.refreshui()
+            self.master.refresh_ui()
 
-        if self.master.currentGameState != GAMESTATE_GETPIECEOUT:
-            self.master.currentGameState = GAMESTATE_MOVE
+        if self.master.current_game_state != GAMESTATE_GETPIECEOUT:
+            self.master.current_game_state = GAMESTATE_MOVE
 
-    def gotoresultscreen(self, victor):
-        recreatescreen()
-        resetstate()
-        self.movebtn.place_forget()
-        self.rollbtn.place_forget()
-        self.resultscreen.victor = victor
-        self.resultscreen.showresultscreen()
+    def goto_result_screen(self, victor):
+        recreate_screen()
+        reset_state()
+        self.move_btn.place_forget()
+        self.roll_btn.place_forget()
+        self.result_screen.victor = victor
+        self.result_screen.show_result_screen()
 
-    def cycleplayers(self):
-        haswinner = True
-        player = self.master.players[self.master.playerchoice]
-        for i in player.playerPieces:
-            if i.isinhouse is False:
-                haswinner = False
+    def cycle_players(self):
+        has_winner = True
+        player = self.master.players[self.master.player_choice]
+        for i in player.player_pieces:
+            if i.is_in_house is False:
+                has_winner = False
                 break
 
-        if haswinner is True:
-            print(f' {self.master.settings.playernames[self.master.playerchoice]} won!')
-            self.gotoresultscreen(self.master.settings.playernames[self.master.playerchoice])
+        if has_winner is True:
+            print(
+                f' {self.master.settings.player_names[self.master.player_choice]} won!')
+            self.goto_result_screen(
+                self.master.settings.player_names[self.master.player_choice])
 
-        if self.master.playerchoice + 1 > self.master.settings.playeramount - 1:
-            self.master.playerchoice = 0
+        if self.master.player_choice + 1 > self.master.settings.player_amount - 1:
+            self.master.player_choice = 0
         else:
-            self.master.playerchoice += 1
+            self.master.player_choice += 1
 
-        if self.ispieceonboard():
-            self.master.currentGameState = GAMESTATE_ROLL
+        if self.is_piece_on_board():
+            self.master.current_game_state = GAMESTATE_ROLL
         else:
-            self.master.currentGameState = GAMESTATE_GETPIECEOUT
+            self.master.current_game_state = GAMESTATE_GETPIECEOUT
 
         self.master.roll = 0
-        self.master.attempt = 0
+        self.master.at_tempt = 0
 
-        pos = self.master.players[self.master.playerchoice].playerPieces[self.master.piecechoice].position
+        pos = self.master.players[self.master.player_choice].player_pieces[self.master.piece_choice].position
         Renderer().highlight((pos[0] + 0.5, pos[1] + 0.5))
 
-    def ispieceonboard(self):
-        for i in range(len(self.master.players[self.master.playerchoice].playerPieces)):
-            if self.master.players[self.master.playerchoice].playerPieces[i].positioninplayingfield is not None:
+    def is_piece_on_board(self):
+        for i in range(len(self.master.players[self.master.player_choice].player_pieces)):
+            if self.master.players[self.master.player_choice].player_pieces[i].position_in_playing_field is not None:
                 return True
 
         return False
 
-    def canpiecemove(self, roll, piece):
-        if piece.positioninplayingfield is None:
+    def can_piece_move(self, roll, piece):
+        if piece.position_in_playing_field is None:
             return False
-        if self.master.lenghtoftravel - piece.tilesmoved > roll and piece.positioninhouse == -1:
-            print(f'PIECE CAN STILL TRAVEL ON FIELD {self.master.lenghtoftravel - piece.tilesmoved} GREATER THAN {roll}')
+        if self.master.lenght_of_travel - piece.tiles_moved > roll and piece.position_in_house == -1:
+            print(
+                f'PIECE CAN STILL TRAVEL ON FIELD {self.master.lenght_of_travel - piece.tiles_moved} GREATER THAN {roll}')
             return True
-        if piece.positioninhouse + roll < self.master.settings.pieceamount:
-            print(f'PIECE CAN STILL TRAVEL IN HOUSES {piece.positioninhouse + roll} LESS THAN {self.master.settings.pieceamount}')
+        if piece.position_in_house + roll < self.master.settings.piece_amount:
+            print(
+                f'PIECE CAN STILL TRAVEL IN HOUSES {piece.position_in_house + roll} LESS THAN {self.master.settings.piece_amount}')
             return True
-        if piece.tilesmoved + roll + piece.positioninhouse <= self.master.lenghtoftravel - 1 + self.master.settings.pieceamount:
+        if piece.tiles_moved + roll + piece.position_in_house <= self.master.lenght_of_travel - 1 + self.master.settings.piece_amount:
             return True
 
         return False
-    
-    def cananypiecemove(self, roll):
-        availablemoves = 0
 
-        for i in range(len(self.master.players[self.master.playerchoice].playerPieces)):
-            piece = self.master.players[self.master.playerchoice].playerPieces[i]
+    def can_any_piece_move(self, roll):
+        available_moves = 0
 
-            if piece.positioninplayingfield is None and roll == 6 or self.canpiecemove(roll, piece):
-                availablemoves += 1
+        for i in range(len(self.master.players[self.master.player_choice].player_pieces)):
+            piece = self.master.players[self.master.player_choice].player_pieces[i]
 
-        return availablemoves
+            if piece.position_in_playing_field is None and roll == 6 or self.can_piece_move(roll, piece):
+                available_moves += 1
 
-    def moveattempt(self, piece):
-        if self.master.currentGameState == GAMESTATE_GETPIECEOUT:
+        return available_moves
+
+    def move_attempt(self, piece):
+        if self.master.current_game_state == GAMESTATE_GETPIECEOUT:
             if self.master.roll == 6:
-                self.master.initiatepiece()
-                self.cycleplayers()
-                self.master.statetext = ""
+                self.master.initiate_piece()
+                self.cycle_players()
+                self.master.state_text = ""
 
             elif self.master.attempt + 1 > 2:
-                self.cycleplayers()
-                self.master.statetext = "Došli ti pokusi"
+                self.cycle_players()
+                self.master.state_text = "Došli ti pokusi"
             else:
                 self.master.attempt += 1
-                self.master.statetext = "Máš dalšlí pokus"
+                self.master.state_text = "Máš dalšlí pokus"
             return
 
-        elif piece.positioninplayingfield is None and self.master.currentGameState == GAMESTATE_MOVE:
+        elif piece.position_in_playing_field is None and self.master.current_game_state == GAMESTATE_MOVE:
             if self.master.roll == 6:
-                if self.master.initiatepiece():
-                    self.cycleplayers()
-                    self.master.statetext = ""
+                if self.master.initiate_piece():
+                    self.cycle_players()
+                    self.master.state_text = ""
                     return
-                self.master.currentGameState = GAMESTATE_MOVE
+                self.master.current_game_state = GAMESTATE_MOVE
                 return
-        
-        availablemoves = self.cananypiecemove(self.master.roll)
-        print(f'Available moves is {availablemoves}')
 
-        if availablemoves <= 0:
-            self.cycleplayers()
-            self.master.statetext = "0 možných pohybov"
+        available_moves = self.can_any_piece_move(self.master.roll)
+        print(f'Available moves is {available_moves}')
+
+        if available_moves <= 0:
+            self.cycle_players()
+            self.master.state_text = "0 možných pohybov"
             return
 
-        if not self.canpiecemove(self.master.roll, piece):
-            self.master.statetext = "Neplatný pohyb"
+        if not self.can_piece_move(self.master.roll, piece):
+            self.master.state_text = "Neplatný pohyb"
             return
-        
-        result = self.master.performmovement(self.master.roll)
+
+        result = self.master.perform_movement(self.master.roll)
         print(f'Result of move is {result}')
 
         match result:
             case 0:  # MOVESTATE_SUCCESS
-                self.master.statetext = ""
-                self.cycleplayers()
+                self.master.state_text = ""
+                self.cycle_players()
             case 1:  # MOVESTATE_OUTOFBOUNDS
-                if availablemoves <= 1:
-                    self.master.statetext = "Neplatný pohyb, 0 možných pohybov"
-                    self.cycleplayers()
+                if available_moves <= 1:
+                    self.master.state_text = "Neplatný pohyb, 0 možných pohybov"
+                    self.cycle_players()
                     return
-                self.master.statetext = "Neplatný pohyb"
-                self.master.currentGameState = GAMESTATE_MOVE
+                self.master.state_text = "Neplatný pohyb"
+                self.master.current_game_state = GAMESTATE_MOVE
             case 2:  # MOVESTATE_TILEOCCUPIED
-                if availablemoves <= 1:
-                    self.master.statetext = "Neplatný pohyb, 0 možných pohybov"
-                    self.cycleplayers()
+                if available_moves <= 1:
+                    self.master.state_text = "Neplatný pohyb, 0 možných pohybov"
+                    self.cycle_players()
                     return
-                self.master.currentGameState = GAMESTATE_MOVE
-                self.master.statetext = "Neplatný pohyb"
+                self.master.current_game_state = GAMESTATE_MOVE
+                self.master.state_text = "Neplatný pohyb"
 
-# inputsystem = InputSystem()
-# win.mainloop()
+
+input_system = InputSystem()
+win.mainloop()

@@ -5,34 +5,34 @@ from offsetfunc import *
 
 class Piece:
     position = None
-    uniqueTurt = None
-    piecenumber = None
-    positioninplayingfield = None
-    positioninhouse = -1
-    tilesmoved = 0
-    isinhouse = False
+    unique_turt = None
+    piece_number = None
+    position_in_playing_field = None
+    position_in_house = -1
+    tiles_moved = 0
+    is_in_house = False
 
-    def __init__(self, piececolor, piecesize, piecenumber):
-        self.uniqueTurt = t.Turtle()
-        self.piecenumber = piecenumber
-        self.uniqueTurt.shape("circle")
-        self.uniqueTurt.color(piececolor)
-        self.uniqueTurt.penup()
-        self.uniqueTurt.turtlesize(piecesize / 25)
+    def __init__(self, piece_color, piece_size, piece_number):
+        self.unique_turt = t.Turtle()
+        self.piece_number = piece_number
+        self.unique_turt.shape("circle")
+        self.unique_turt.color(piece_color)
+        self.unique_turt.penup()
+        self.unique_turt.turtlesize(piece_size / 25)
 
-        # self.uniqueTurt.onclick(self.getpieceid)
+        # self.unique_turt.onclick(self.getpieceid)
 
-    def placepiece(self, position):
-        self.uniqueTurt.speed(0)
-        self.uniqueTurt.setpos(offsettocenter(position))
-        self.uniqueTurt.speed(3)
+    def place_piece(self, position):
+        self.unique_turt.speed(0)
+        self.unique_turt.setpos(off_set_to_center(position))
+        self.unique_turt.speed(3)
         self.position = position
 
     # Moves the piece to the input coordinate tuple.
-    def movepiece(self, coords):
-        self.uniqueTurt.setpos(offsettocenter(coords))
+    def move_piece(self, coords):
+        self.unique_turt.setpos(off_set_to_center(coords))
         self.position = coords
-        
+
     # def getpieceid(self, dummy, dummy2):
     #     print(self.piecenumber, self.position)
     #     return self.position

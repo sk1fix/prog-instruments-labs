@@ -3,246 +3,262 @@ import sys
 from inputs import *
 
 
-menufont = ('Arial', int(windowsize / fontsizefactor), 'normal')
-titlefont = ('Comic Sans MS', int(windowsize / (fontsizefactor * 0.5)), 'normal')
+menu_font = ('Arial', int(window_size / font_size_factor), 'normal')
+title_font = ('Comic Sans MS', int(
+    window_size / (font_size_factor * 0.5)), 'normal')
 
 
-def rgbtohex(rgb):
+def rgb_to_hex(rgb):
     return "#%02x%02x%02x" % rgb
 
 
-def exitgame():
+def exit_game():
     sys.exit(0)
 
 
 class Mainmenu:
     start = None
     leave = None
-    gameguide = None
-    gamename = None
+    game_guide = None
+    game_name = None
 
     def __init__(self):
-        self.start = Button(canvas.master, text="Hrať", width=int(windowsize / 50),
-                            command=lambda: self.startbtn(), font=menufont)
-        self.leave = Button(canvas.master, text="Koniec", width=int(windowsize / 50),
-                            command=lambda: exitgame(), font=menufont)
-        self.gameguide = Button(canvas.master, text="Ako hrať", width=int(windowsize / 50),
-                                command=lambda: self.gameguidebtn(), font=menufont)
-        self.gamename = Label(text="Cloveče Nehnevaj Sa!", font=titlefont, bg=rgbtohex(bgcolor))
+        self.start = Button(canvas.master, text="Hrať", width=int(window_size / 50),
+                            command=lambda: self.start_btn(), font=menu_font)
+        self.leave = Button(canvas.master, text="Koniec", width=int(window_size / 50),
+                            command=lambda: exit_game(), font=menu_font)
+        self.game_guide = Button(canvas.master, text="Ako hrať", width=int(window_size / 50),
+                                 command=lambda: self.game_guidebtn(), font=menu_font)
+        self.game_name = Label(text="Cloveče Nehnevaj Sa!",
+                               font=title_font, bg=rgb_to_hex(bgcolor))
 
-    def showmainmenu(self):
+    def show_main_menu(self):
         self.start.place(relx=0.5, rely=0.42, anchor=CENTER)
         self.leave.place(relx=0.5, rely=0.58, anchor=CENTER)
-        self.gameguide.place(relx=0.5, rely=0.5, anchor=CENTER)
-        self.gamename.place(relx=0.5, rely=0.3, anchor=CENTER)
+        self.game_guide.place(relx=0.5, rely=0.5, anchor=CENTER)
+        self.game_name.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-    def hidemainmenu(self):
+    def hide_main_menu(self):
         self.start.place_forget()
         self.leave.place_forget()
-        self.gameguide.place_forget()
-        self.gamename.place_forget()
+        self.game_guide.place_forget()
+        self.game_name.place_forget()
 
-    def startbtn(self):
-        self.hidemainmenu()
-        options.showgameoptions()
+    def start_btn(self):
+        self.hide_main_menu()
+        options.show_game_options()
 
-    def gameguidebtn(self):
-        self.hidemainmenu()
-        guide.showgameguide()
+    def game_guidebtn(self):
+        self.hide_main_menu()
+        guide.show_game_guide()
 
 
 class GameOptions:
-    playeramount = 4
-    pieceamount = 4
-    tileamount = 3
+    player_amount = 4
+    piece_amount = 4
+    tile_amount = 3
 
-    toptext = None
-    playeramountlabel = None
-    playeramounthigher = None
-    playeramountnumber = None
-    playeramountlower = None
+    top_text = None
+    player_amount_label = None
+    player_amount_higher = None
+    player_amount_number = None
+    player_amount_lower = None
 
-    pieceamountlabel = None
-    pieceamounthigher = None
-    pieceamountnumber = None
-    pieceamountlower = None
+    piece_amount_label = None
+    piece_amount_higher = None
+    piece_amount_number = None
+    piece_amount_lower = None
 
-    tileamountlabel = None
-    tileamounthigher = None
-    tileamountnumber = None
-    tileamountlower = None
+    tile_amount_label = None
+    tile_amount_higher = None
+    tile_amount_number = None
+    tile_amount_lower = None
     back = None
 
-    namesbtn = None
+    names_btn = None
     names = ["Modrý", "Žltý", "Zelený", "Červený"]
-    entryfields = []
+    entry_fields = []
 
-    startgame = None
+    start_game = None
 
-    inputsystem = None
+    input_system = None
 
     def __init__(self):
-        self.toptext = Label(canvas.master, text="Zvol nastavenia hry", font=menufont, bg=rgbtohex(bgcolor))
+        self.top_text = Label(
+            canvas.master, text="Zvol nastavenia hry", font=menu_font, bg=rgb_to_hex(bgcolor))
 
         # Player amount widgets
-        self.playeramountlabel = Label(canvas.master, text="Počet hráčov:", font=menufont, bg=rgbtohex(bgcolor))
-        self.playeramounthigher = Button(canvas.master, text=">",
-                                         command=lambda: self.increaseplayeramount(), font=menufont)
+        self.player_amount_label = Label(
+            canvas.master, text="Počet hráčov:", font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.player_amount_higher = Button(canvas.master, text=">",
+                                           command=lambda: self.increase_player_amount(), font=menu_font)
 
-        self.playeramountnumber = Label(canvas.master, text=str(self.playeramount), font=menufont, bg=rgbtohex(bgcolor))
-        self.playeramountlower = Button(canvas.master, text="<",
-                                        command=lambda: self.decreaseplayeramount(), font=menufont)
+        self.player_amount_number = Label(canvas.master, text=str(
+            self.player_amount), font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.player_amount_lower = Button(canvas.master, text="<",
+                                          command=lambda: self.decrease_player_amount(), font=menu_font)
 
         # Piece amount widgets
-        self.pieceamountlabel = Label(canvas.master, text="Počet figúrok:", font=menufont, bg=rgbtohex(bgcolor))
-        self.pieceamounthigher = Button(canvas.master, text=">",
-                                        command=lambda: self.increasepieceamount(), font=menufont)
+        self.piece_amount_label = Label(
+            canvas.master, text="Počet figúrok:", font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.piece_amount_higher = Button(canvas.master, text=">",
+                                          command=lambda: self.increase_piece_amount(), font=menu_font)
 
-        self.pieceamountnumber = Label(canvas.master, text=str(self.pieceamount), font=menufont, bg=rgbtohex(bgcolor))
-        self.pieceamountlower = Button(canvas.master, text="<",
-                                       command=lambda: self.decreasepieceamount(), font=menufont)
+        self.piece_amount_number = Label(canvas.master, text=str(
+            self.piece_amount), font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.piece_amount_lower = Button(canvas.master, text="<",
+                                         command=lambda: self.decrease_piece_amount(), font=menu_font)
 
         # Tile amount widgets
-        self.tileamountlabel = Label(canvas.master, text="Veľkosť hernej plochy:", font=menufont, bg=rgbtohex(bgcolor))
-        self.tileamounthigher = Button(canvas.master, text=">",
-                                       command=lambda: self.increasetileamount(), font=menufont)
+        self.tile_amount_label = Label(
+            canvas.master, text="Veľkosť hernej plochy:", font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.tile_amount_higher = Button(canvas.master, text=">",
+                                         command=lambda: self.increase_tile_amount(), font=menu_font)
 
-        self.tileamountnumber = Label(canvas.master, text=str(self.tileamount), font=menufont, bg=rgbtohex(bgcolor))
-        self.tileamountlower = Button(canvas.master, text="<",
-                                      command=lambda: self.decreasetileamount(), font=menufont)
+        self.tile_amount_number = Label(canvas.master, text=str(
+            self.tile_amount), font=menu_font, bg=rgb_to_hex(bgcolor))
+        self.tile_amount_lower = Button(canvas.master, text="<",
+                                        command=lambda: self.decrease_tile_amount(), font=menu_font)
 
-        self.back = Button(canvas.master, text="Späť", command=lambda: self.backbtn(), font=menufont)
-        self.namesbtn = Button(canvas.master, text="Zvoľ mená", command=lambda: self.namewindow(), font=menufont)
-        self.startgame = Button(canvas.master, text="Hrať", command=lambda: self.startbtn(), font=menufont)
+        self.back = Button(canvas.master, text="Späť",
+                           command=lambda: self.back_btn(), font=menu_font)
+        self.names_btn = Button(canvas.master, text="Zvoľ mená",
+                                command=lambda: self.name_window(), font=menu_font)
+        self.start_game = Button(
+            canvas.master, text="Hrať", command=lambda: self.start_btn(), font=menu_font)
 
-    def showgameoptions(self):
-        self.toptext.place(relx=0.5, rely=0.3, anchor=CENTER)
+    def show_game_options(self):
+        self.top_text.place(relx=0.5, rely=0.3, anchor=CENTER)
 
-        self.playeramountlabel.place(relx=0.5, rely=0.36, anchor=CENTER)
-        self.playeramounthigher.place(relx=0.6, rely=0.42, anchor=CENTER)
-        self.playeramountnumber.place(relx=0.5, rely=0.42, anchor=CENTER)
-        self.playeramountlower.place(relx=0.4, rely=0.42, anchor=CENTER)
+        self.player_amount_label.place(relx=0.5, rely=0.36, anchor=CENTER)
+        self.player_amount_higher.place(relx=0.6, rely=0.42, anchor=CENTER)
+        self.player_amount_number.place(relx=0.5, rely=0.42, anchor=CENTER)
+        self.player_amount_lower.place(relx=0.4, rely=0.42, anchor=CENTER)
 
-        self.pieceamountlabel.place(relx=0.5, rely=0.48, anchor=CENTER)
-        self.pieceamounthigher.place(relx=0.6, rely=0.54, anchor=CENTER)
-        self.pieceamountnumber.place(relx=0.5, rely=0.54, anchor=CENTER)
-        self.pieceamountlower.place(relx=0.4, rely=0.54, anchor=CENTER)
+        self.piece_amount_label.place(relx=0.5, rely=0.48, anchor=CENTER)
+        self.piece_amount_higher.place(relx=0.6, rely=0.54, anchor=CENTER)
+        self.piece_amount_number.place(relx=0.5, rely=0.54, anchor=CENTER)
+        self.piece_amount_lower.place(relx=0.4, rely=0.54, anchor=CENTER)
 
-        self.tileamountlabel.place(relx=0.5, rely=0.60, anchor=CENTER)
-        self.tileamounthigher.place(relx=0.6, rely=0.66, anchor=CENTER)
-        self.tileamountnumber.place(relx=0.5, rely=0.66, anchor=CENTER)
-        self.tileamountlower.place(relx=0.4, rely=0.66, anchor=CENTER)
+        self.tile_amount_label.place(relx=0.5, rely=0.60, anchor=CENTER)
+        self.tile_amount_higher.place(relx=0.6, rely=0.66, anchor=CENTER)
+        self.tile_amount_number.place(relx=0.5, rely=0.66, anchor=CENTER)
+        self.tile_amount_lower.place(relx=0.4, rely=0.66, anchor=CENTER)
 
         self.back.place(relx=0.3, rely=0.8, anchor=CENTER)
-        self.namesbtn.place(relx=0.5, rely=0.8, anchor=CENTER)
-        self.startgame.place(relx=0.7, rely=0.8, anchor=CENTER)
+        self.names_btn.place(relx=0.5, rely=0.8, anchor=CENTER)
+        self.start_game.place(relx=0.7, rely=0.8, anchor=CENTER)
 
-    def hidegameoptions(self):
-        self.toptext.place_forget()
+    def hide_game_options(self):
+        self.top_text.place_forget()
 
-        self.playeramountlabel.place_forget()
-        self.playeramounthigher.place_forget()
-        self.playeramountnumber.place_forget()
-        self.playeramountlower.place_forget()
+        self.player_amount_label.place_forget()
+        self.player_amount_higher.place_forget()
+        self.player_amount_number.place_forget()
+        self.player_amount_lower.place_forget()
 
-        self.pieceamountlabel.place_forget()
-        self.pieceamounthigher.place_forget()
-        self.pieceamountnumber.place_forget()
-        self.pieceamountlower.place_forget()
+        self.piece_amount_label.place_forget()
+        self.piece_amount_higher.place_forget()
+        self.piece_amount_number.place_forget()
+        self.piece_amount_lower.place_forget()
 
-        self.tileamountlabel.place_forget()
-        self.tileamounthigher.place_forget()
-        self.tileamountnumber.place_forget()
-        self.tileamountlower.place_forget()
+        self.tile_amount_label.place_forget()
+        self.tile_amount_higher.place_forget()
+        self.tile_amount_number.place_forget()
+        self.tile_amount_lower.place_forget()
 
         self.back.place_forget()
-        self.namesbtn.place_forget()
-        self.startgame.place_forget()
+        self.names_btn.place_forget()
+        self.start_game.place_forget()
 
-    def increaseplayeramount(self):
-        if self.playeramount + 1 <= 4:
-            self.playeramount += 1
-            self.playeramountnumber.config(text=str(self.playeramount))
+    def increase_player_amount(self):
+        if self.player_amount + 1 <= 4:
+            self.player_amount += 1
+            self.player_amount_number.config(text=str(self.player_amount))
 
-    def decreaseplayeramount(self):
-        if self.playeramount - 1 >= 2:
-            self.playeramount -= 1
-            self.playeramountnumber.config(text=str(self.playeramount))
+    def decrease_player_amount(self):
+        if self.player_amount - 1 >= 2:
+            self.player_amount -= 1
+            self.player_amount_number.config(text=str(self.player_amount))
 
-    def increasepieceamount(self):
-        if self.pieceamount + 1 <= 11 and self.pieceamount + 1 <= self.tileamount + 1:
-            self.pieceamount += 1
-            self.pieceamountnumber.config(text=str(self.pieceamount))
+    def increase_piece_amount(self):
+        if self.piece_amount + 1 <= 11 and self.piece_amount + 1 <= self.tile_amount + 1:
+            self.piece_amount += 1
+            self.piece_amount_number.config(text=str(self.piece_amount))
 
-    def decreasepieceamount(self):
-        if self.pieceamount - 1 >= 1:
-            self.pieceamount -= 1
-            self.pieceamountnumber.config(text=str(self.pieceamount))
+    def decrease_piece_amount(self):
+        if self.piece_amount - 1 >= 1:
+            self.piece_amount -= 1
+            self.piece_amount_number.config(text=str(self.piece_amount))
 
-    def increasetileamount(self):
-        if self.tileamount + 1 <= 10:
-            self.tileamount += 1
-            self.tileamountnumber.config(text=str(self.tileamount))
+    def increase_tile_amount(self):
+        if self.tile_amount + 1 <= 10:
+            self.tile_amount += 1
+            self.tile_amount_number.config(text=str(self.tile_amount))
 
-    def decreasetileamount(self):
-        if self.tileamount - 1 >= 0:
-            self.tileamount -= 1
-            self.tileamountnumber.config(text=str(self.tileamount))
-            if self.tileamount < self.pieceamount - 1:
-                self.pieceamount -= 1
-                self.pieceamountnumber.config(text=str(self.pieceamount))
+    def decrease_tile_amount(self):
+        if self.tile_amount - 1 >= 0:
+            self.tile_amount -= 1
+            self.tile_amount_number.config(text=str(self.tile_amount))
+            if self.tile_amount < self.piece_amount - 1:
+                self.piece_amount -= 1
+                self.piece_amount_number.config(text=str(self.piece_amount))
 
-    def backbtn(self):
-        self.hidegameoptions()
-        main.showmainmenu()
+    def back_btn(self):
+        self.hide_game_options()
+        main.show_main_menu()
 
-    def namewindow(self):
-        namewindow = Toplevel(canvas)
-        namewindow.title("Zvoľ mená")
-        namewindowsize = str(int(windowsize / 3)) + "x" + str(int(windowsize / 3))
-        namewindow.geometry(str(namewindowsize))
-        self.entryfields = []
+    def name_window(self):
+        name_window = Toplevel(canvas)
+        name_window.title("Zvoľ mená")
+        name_window_size = str(int(window_size / 3)) + \
+            "x" + str(int(window_size / 3))
+        name_window.geometry(str(name_window_size))
+        self.entry_fields = []
 
-        def closenamewindow():
-            for playernames in range(self.playeramount):
-                self.names[playernames] = self.entryfields[playernames].get()
-            namewindow.destroy()
+        def close_name_window():
+            for player_names in range(self.player_amount):
+                self.names[player_names] = self.entry_fields[player_names].get()
+            name_window.destroy()
 
-        Label(namewindow, text="Zvoľ mená hráčov", font=menufont).pack()
-        for players in range(self.playeramount):
-            entryfield = Entry(namewindow, font=menufont)
-            entryfield.insert(0, self.names[players])
-            self.entryfields.append(entryfield)
-            self.entryfields[players].pack()
+        Label(name_window, text="Zvoľ mená hráčov", font=menu_font).pack()
+        for players in range(self.player_amount):
+            entry_field = Entry(name_window, font=menu_font)
+            entry_field.insert(0, self.names[players])
+            self.entry_fields.append(entry_field)
+            self.entry_fields[players].pack()
 
-        Button(namewindow, text="Potvrdiť", command=lambda: closenamewindow(), font=menufont).pack()
+        Button(name_window, text="Potvrdiť",
+               command=lambda: close_name_window(), font=menu_font).pack()
 
-    def startbtn(self):
-        Settings.playernames = ["", "", "", ""]
-        for playernames in range(self.playeramount):
-            Settings.playernames[playernames] = self.names[playernames]
+    def start_btn(self):
+        Settings.player_names = ["", "", "", ""]
+        for player_names in range(self.player_amount):
+            Settings.player_names[player_names] = self.names[player_names]
 
-        self.hidegameoptions()
-        self.inputsystem = InputSystem(ResultScreen())
-        self.inputsystem.master = GameMaster(self.playeramount, self.pieceamount, self.tileamount)
-        GameMaster.inmenu = False
+        self.hide_game_options()
+        self.input_system = input_system(ResultScreen())
+        self.input_system.master = GameMaster(
+            self.player_amount, self.piece_amount, self.tile_amount)
+        GameMaster.in_menu = False
 
 
-class GameGuide:
+class game_guide:
     back = None
 
     def __init__(self):
-        self.back = Button(canvas.master, text="Späť", command=lambda: self.backbtn(), font=menufont)
+        self.back = Button(canvas.master, text="Späť",
+                           command=lambda: self.back_btn(), font=menu_font)
 
-    def showgameguide(self):
+    def show_game_guide(self):
         self.back.place(relx=0.3, rely=0.8, anchor=CENTER)
 
-    def hidegameguide(self):
+    def hide_game_guide(self):
         self.back.place_forget()
 
-    def backbtn(self):
-        self.hidegameguide()
-        main.showmainmenu()
+    def back_btn(self):
+        self.hide_game_guide()
+        main.show_main_menu()
 
 
 class ResultScreen:
@@ -251,27 +267,29 @@ class ResultScreen:
     victor = None
 
     def __init__(self):
-        self.title = Label(text="X vyhral!", font=titlefont, bg=rgbtohex(bgcolor))
-        self.back = Button(canvas.master, text="Späť do hlavného menu", command=lambda: self.backbtn(), font=menufont)
+        self.title = Label(text="X vyhral!", font=title_font,
+                           bg=rgb_to_hex(bgcolor))
+        self.back = Button(canvas.master, text="Späť do hlavného menu",
+                           command=lambda: self.back_btn(), font=menu_font)
 
-    def showresultscreen(self):
+    def show_result_screen(self):
         self.title.config(text=f'{self.victor} vyhral!')
         self.title.place(relx=0.5, rely=0.3, anchor=CENTER)
         self.back.place(relx=0.5, rely=0.8, anchor=CENTER)
 
-    def hideresultscreen(self):
+    def hide_result_screen(self):
         self.title.place_forget()
         self.back.place_forget()
 
-    def backbtn(self):
-        self.hideresultscreen()
-        main.showmainmenu()
+    def back_btn(self):
+        self.hide_result_screen()
+        main.show_main_menu()
 
 
 main = Mainmenu()
 options = GameOptions()
-guide = GameGuide()
+guide = game_guide()
 result = ResultScreen()
 
-Mainmenu().showmainmenu()
+Mainmenu().show_main_menu()
 win.mainloop()

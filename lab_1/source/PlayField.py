@@ -2,99 +2,103 @@ from Tile import *
 
 
 class PlayField:
-    fieldTiles = []
-    canvassize = (5, 5)
-    dotsize = 70
-    fieldincrement = 8
-    fieldminsize = 16
-    canvasminsize = 5
+    field_tiles = []
+    canvas_size = (5, 5)
+    dot_size = 70
+    field_in_crement = 8
+    field_min_size = 16
+    canvas_min_size = 5
     border = 2
     color = "white"
 
-    starthouses = [[], [], [], []]
-    endhouses = [[], [], [], []]
-    starttileids = []
+    start_houses = [[], [], [], []]
+    end_houses = [[], [], [], []]
+    start_tile_ids = []
     decoration = []
 
-    def generatefield(self, extratiles, screensize):
-        canvassize = self.canvasminsize + (extratiles * 2) + self.border
-        self.dotsize = (screensize / canvassize) - ((screensize / canvassize) / 7)
-        self.canvassize = (canvassize + 1, canvassize)
-        center = (canvassize / 2) - 0.5
-        rightlist = []
-        leftlist = []
+    def generate_field(self, extra_tiles, screen_size):
+        canvas_size = self.canvas_min_size + (extra_tiles * 2) + self.border
+        self.dot_size = (screen_size / canvas_size) - \
+            ((screen_size / canvas_size) / 7)
+        self.canvas_size = (canvas_size + 1, canvas_size)
+        center = (canvas_size / 2) - 0.5
+        right_list = []
+        left_list = []
 
-        for x in range(canvassize):
-            for y in range(canvassize):
+        for x in range(canvas_size):
+            for y in range(canvas_size):
                 self.decoration.append((x, y))
 
         # generate playing field in the right order and write down the tiles into a list
-        for x in range(2 + extratiles):
-            rightlist.append((center + 1, center + 2 + extratiles - x))
-            leftlist.append((center - 1, center - 2 - extratiles + x))
+        for x in range(2 + extra_tiles):
+            right_list.append((center + 1, center + 2 + extra_tiles - x))
+            left_list.append((center - 1, center - 2 - extra_tiles + x))
 
-        for x in range(1 + extratiles):
-            rightlist.append((center + 2 + x, center + 1))
-            leftlist.append((center - 2 - x, center - 1))
+        for x in range(1 + extra_tiles):
+            right_list.append((center + 2 + x, center + 1))
+            left_list.append((center - 2 - x, center - 1))
 
-        rightlist.append((center + 2 + extratiles, center))
-        leftlist.append((center - 2 - extratiles, center))
+        right_list.append((center + 2 + extra_tiles, center))
+        left_list.append((center - 2 - extra_tiles, center))
 
-        for x in range(2 + extratiles):
-            rightlist.append((center + 2 + extratiles - x, center - 1))
-            leftlist.append((center - 2 - extratiles + x, center + 1))
+        for x in range(2 + extra_tiles):
+            right_list.append((center + 2 + extra_tiles - x, center - 1))
+            left_list.append((center - 2 - extra_tiles + x, center + 1))
 
-        for x in range(1 + extratiles):
-            rightlist.append((center + 1, center - 2 - x))
-            leftlist.append((center - 1, center + 2 + x))
+        for x in range(1 + extra_tiles):
+            right_list.append((center + 1, center - 2 - x))
+            left_list.append((center - 1, center + 2 + x))
 
-        rightlist.append((center, center - 2 - extratiles))
-        leftlist.append((center, center + 2 + extratiles))
+        right_list.append((center, center - 2 - extra_tiles))
+        left_list.append((center, center + 2 + extra_tiles))
 
-        fulllist = rightlist + leftlist
-        for i in range(len(fulllist)):
-            tile = Tile(i, fulllist[i], False)
-            self.fieldTiles.append(tile)
+        full_list = right_list + left_list
+        for i in range(len(full_list)):
+            tile = Tile(i, full_list[i], False)
+            self.field_tiles.append(tile)
 
         # create tiles for end houses and put them in a list
-        for i in range(extratiles + 1):
-            endhousetuples1 = (center, center + extratiles + 1 - i)
-            endhousetuples2 = (center, center - extratiles - 1 + i)
-            endhousetuples3 = (center + extratiles + 1 - i, center)
-            endhousetuples4 = (center - extratiles - 1 + i, center)
+        for i in range(extra_tiles + 1):
+            end_house_tuples1 = (center, center + extra_tiles + 1 - i)
+            end_house_tuples2 = (center, center - extra_tiles - 1 + i)
+            end_house_tuples3 = (center + extra_tiles + 1 - i, center)
+            end_house_tuples4 = (center - extra_tiles - 1 + i, center)
 
-            tile1 = Tile(i, endhousetuples1, True)
-            tile2 = Tile(i, endhousetuples2, True)
-            tile3 = Tile(i, endhousetuples3, True)
-            tile4 = Tile(i, endhousetuples4, True)
+            tile1 = Tile(i, end_house_tuples1, True)
+            tile2 = Tile(i, end_house_tuples2, True)
+            tile3 = Tile(i, end_house_tuples3, True)
+            tile4 = Tile(i, end_house_tuples4, True)
 
-            self.endhouses[0].append(tile1)
-            self.endhouses[1].append(tile2)
-            self.endhouses[2].append(tile3)
-            self.endhouses[3].append(tile4)
+            self.end_houses[0].append(tile1)
+            self.end_houses[1].append(tile2)
+            self.end_houses[2].append(tile3)
+            self.end_houses[3].append(tile4)
 
         # create tiles for starting houes in a grid and put them in a list
-        for y in range(1 + int(((extratiles / 2) + 0.5))):
-            for x in range(1 + int(((extratiles / 2) + 0.5))):
-                starthouses1 = (canvassize - 2 - y, canvassize - 2 - x)
-                starthouses2 = (1 + y, 1 + x)
-                starthouses3 = (canvassize - 2 - y, 1 + x)
-                starthouses4 = (1 + y, canvassize - 2 - x)
+        for y in range(1 + int(((extra_tiles / 2) + 0.5))):
+            for x in range(1 + int(((extra_tiles / 2) + 0.5))):
+                start_houses1 = (canvas_size - 2 - y, canvas_size - 2 - x)
+                start_houses2 = (1 + y, 1 + x)
+                start_houses3 = (canvas_size - 2 - y, 1 + x)
+                start_houses4 = (1 + y, canvas_size - 2 - x)
 
-                tile1 = Tile(1, starthouses1, True)
-                tile2 = Tile(1, starthouses2, True)
-                tile3 = Tile(1, starthouses3, True)
-                tile4 = Tile(1, starthouses4, True)
+                tile1 = Tile(1, start_houses1, True)
+                tile2 = Tile(1, start_houses2, True)
+                tile3 = Tile(1, start_houses3, True)
+                tile4 = Tile(1, start_houses4, True)
 
-                self.starthouses[0].append(tile1)
-                self.starthouses[1].append(tile2)
-                self.starthouses[2].append(tile3)
-                self.starthouses[3].append(tile4)
+                self.start_houses[0].append(tile1)
+                self.start_houses[1].append(tile2)
+                self.start_houses[2].append(tile3)
+                self.start_houses[3].append(tile4)
 
         # put the IDs of starting tiles into a list
-        startingtilesdivision = int(len(self.fieldTiles) / 4)
-        for i in range(len(self.fieldTiles)):
-            self.starttileids.append(self.fieldTiles[i].tileID)
-            self.starttileids.append(self.fieldTiles[startingtilesdivision * 2].tileID)
-            self.starttileids.append(self.fieldTiles[startingtilesdivision * 1].tileID)
-            self.starttileids.append(self.fieldTiles[startingtilesdivision * 3].tileID)
+        starting_tiles_division = int(len(self.field_tiles) / 4)
+        for i in range(len(self.field_tiles)):
+            self.start_tile_ids.append(self.field_tiles[i].tile_ID)
+            self.start_tile_ids.append(
+                self.field_tiles[starting_tiles_division * 2].tile_ID)
+            self.start_tile_ids.append(
+                self.field_tiles[starting_tiles_division * 1].tile_ID)
+            self.start_tile_ids.append(
+                self.field_tiles[starting_tiles_division * 3].tile_ID)

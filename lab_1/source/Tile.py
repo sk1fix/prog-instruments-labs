@@ -1,10 +1,10 @@
 class Tile:
-    tileCoords = ()
-    tilestandingplayer = None
-    tilestandingpiece = None
-    tileID = None
+    tile_coords = ()
+    tile_standing_player = None
+    tile_standing_piece = None
+    tile_ID = None
 
-    def __init__(self, tileid, cords, ishouse):
-        self.tileCoords = cords
-        self.tileID = tileid
-        self.ishouse = ishouse
+    def __init__(self, tile_ID, cords, is_house):
+        self.tile_coords = cords
+        self.tile_ID = tile_ID
+        self.is_house = is_house
