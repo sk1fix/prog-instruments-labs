@@ -2,6 +2,36 @@ from Tile import *
 
 
 class PlayField:
+    """
+    Class representing the game board, including field tiles, start and end houses, and decorations.
+
+    Attributes:
+    ----------
+    field_tiles : list[Tile]
+        List of tiles on the playing field.
+    canvas_size : tuple
+        Size of the canvas in terms of tiles (width, height).
+    dot_size : int
+        Size of each tile in pixels.
+    field_in_crement : int
+        Increment used for field configuration.
+    field_min_size : int
+        Minimum size of the playing field.
+    canvas_min_size : int
+        Minimum size of the canvas.
+    border : int
+        Border size for the playing field.
+    color : str
+        Color of the playing field.
+    start_houses : list[list[Tile]]
+        Lists of tiles representing each player's starting houses.
+    end_houses : list[list[Tile]]
+        Lists of tiles representing each player's end houses.
+    start_tile_ids : list[int]
+        IDs of starting tiles on the board.
+    decoration : list[tuple]
+        List of coordinates for decorative elements.
+    """
     field_tiles = []
     canvas_size = (5, 5)
     dot_size = 70
@@ -17,6 +47,16 @@ class PlayField:
     decoration = []
 
     def generate_field(self, extra_tiles, screen_size):
+        """
+        Generates the playing field, start and end houses, and decorations.
+
+        Parameters:
+        ----------
+        extra_tiles : int
+            Additional tiles to add around the basic field size.
+        screen_size : int
+            Screen size in pixels, used to calculate tile sizes.
+        """
         canvas_size = self.canvas_min_size + (extra_tiles * 2) + self.border
         self.dot_size = (screen_size / canvas_size) - \
             ((screen_size / canvas_size) / 7)

@@ -4,6 +4,20 @@ from gamemaster import *
 
 
 class InputSystem:
+    """
+    Class for handling user input and managing game actions.
+
+    Attributes:
+    ----------
+    roll_btn : Button
+        Button for rolling the dice.
+    move_btn : Button
+        Button for moving a piece.
+    result_screen : any
+        Screen to display the game result.
+    master : GameMaster
+        Main game controller object.
+    """
     roll_btn = None
     move_btn = None
     result_screen = None
@@ -13,6 +27,14 @@ class InputSystem:
     # master.in_menu = False
 
     def __init__(self, result_screen):
+        """
+        Initializes the InputSystem class, sets up buttons, and binds key events.
+
+        Parameters:
+        ----------
+        result_screen : any
+            Screen object to display the results.
+        """
         win.onkey(lambda key="Return": self.input_handler(key), "Return")
         win.onkey(lambda key="Space": self.input_handler(key), "space")
         win.onkey(lambda key="Left": self.input_handler(key), "Left")
@@ -30,6 +52,14 @@ class InputSystem:
         win.listen()
 
     def input_handler(self, key):
+        """
+        Handles key input actions and triggers corresponding game actions.
+
+        Parameters:
+        ----------
+        key : str
+            Key pressed by the user.
+        """
         if self.master.in_menu is False and self.master.current_game_state != GAMESTATE_AWAIT:
             match key:
                 case "Left":
@@ -51,6 +81,16 @@ class InputSystem:
         self.master.refresh_ui()
 
     def mouse_select_piece(self, x, y):
+        """
+        Selects a piece based on mouse click position.
+
+        Parameters:
+        ----------
+        x : int
+            X-coordinate of the click.
+        y : int
+            Y-coordinate of the click.
+        """
         position = (int(x), int(y))
 
         piecelist = self.master.players[self.master.player_choice].player_pieces
@@ -62,6 +102,9 @@ class InputSystem:
                 return
 
     def cycle_pieces_right(self):
+        """
+        Cycles the selection to the next piece on the right.
+        """
         if self.master.piece_choice + 1 > self.master.settings.piece_amount - 1:
             self.master.piece_choice = 0
         else:
@@ -72,6 +115,9 @@ class InputSystem:
         print(self.master.piece_choice)
 
     def cycle_pieces_left(self):
+        """
+        Cycles the selection to the previous piece on the left.
+        """
         if self.master.piece_choice - 1 < 0:
             self.master.piece_choice = self.master.settings.piece_amount - 1
         else:
@@ -82,6 +128,9 @@ class InputSystem:
         print(self.master.piece_choice)
 
     def roll(self):
+        """
+        Rolls the dice and updates the game state.
+        """
         if self.master.current_game_state != GAMESTATE_MOVE:
             self.master.roll = random.randrange(1, 7)
             self.master.refresh_ui()
@@ -90,6 +139,14 @@ class InputSystem:
             self.master.current_game_state = GAMESTATE_MOVE
 
     def debug_roll(self, roll):
+        """
+        Sets a predefined dice roll value for debugging purposes.
+
+        Parameters:
+        ----------
+        roll : int
+            Value to set for the dice roll.
+        """
         if self.master.current_game_state != GAMESTATE_MOVE:
             self.master.roll = roll
             self.master.refresh_ui()
@@ -98,6 +155,14 @@ class InputSystem:
             self.master.current_game_state = GAMESTATE_MOVE
 
     def goto_result_screen(self, victor):
+        """
+        Navigates to the result screen and resets the game state.
+
+        Parameters:
+        ----------
+        victor : str
+            Name of the winning player.
+        """
         recreate_screen()
         reset_state()
         self.move_btn.place_forget()
@@ -106,6 +171,9 @@ class InputSystem:
         self.result_screen.show_result_screen()
 
     def cycle_players(self):
+        """
+        Switches to the next player and updates the game state.
+        """
         has_winner = True
         player = self.master.players[self.master.player_choice]
         for i in player.player_pieces:
@@ -136,6 +204,14 @@ class InputSystem:
         Renderer().highlight((pos[0] + 0.5, pos[1] + 0.5))
 
     def is_piece_on_board(self):
+        """
+        Checks if any of the current player's pieces are on the board.
+
+        Returns:
+        -------
+        bool
+            True if any piece is on the board; False otherwise.
+        """
         for i in range(len(self.master.players[self.master.player_choice].player_pieces)):
             if self.master.players[self.master.player_choice].player_pieces[i].position_in_playing_field is not None:
                 return True
@@ -143,6 +219,21 @@ class InputSystem:
         return False
 
     def can_piece_move(self, roll, piece):
+        """
+        Determines if a specific piece can move based on the roll.
+
+        Parameters:
+        ----------
+        roll : int
+            Dice roll value.
+        piece : Piece
+            The piece to evaluate.
+
+        Returns:
+        -------
+        bool
+            True if the piece can move; False otherwise.
+        """
         if piece.position_in_playing_field is None:
             return False
         if self.master.lenght_of_travel - piece.tiles_moved > roll and piece.position_in_house == -1:
@@ -159,6 +250,19 @@ class InputSystem:
         return False
 
     def can_any_piece_move(self, roll):
+        """
+        Checks if any piece of the current player can move.
+
+        Parameters:
+        ----------
+        roll : int
+            Dice roll value.
+
+        Returns:
+        -------
+        int
+            Number of available moves.
+        """
         available_moves = 0
 
         for i in range(len(self.master.players[self.master.player_choice].player_pieces)):
@@ -170,6 +274,14 @@ class InputSystem:
         return available_moves
 
     def move_attempt(self, piece):
+        """
+        Attempts to move a piece and applies the game rules.
+
+        Parameters:
+        ----------
+        piece : Piece
+            The piece to move.
+        """
         if self.master.current_game_state == GAMESTATE_GETPIECEOUT:
             if self.master.roll == 6:
                 self.master.initiate_piece()

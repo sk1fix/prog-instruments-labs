@@ -21,12 +21,18 @@ game_font = ('Arial', int(window_size / font_size_factor), 'normal')
 
 
 def recreate_screen():
+    """
+    Clears and reinitializes the game screen.
+    """
     t.Screen().clear()
     t.colormode(255)
     win.bgcolor(bgcolor)
 
 
 def reset_state():
+    """
+    Resets the game state and variables to their default values.
+    """
     GameMaster.settings = None
     GameMaster.playing_field = None
 
@@ -42,6 +48,34 @@ def reset_state():
 
 
 class GameMaster:
+    """
+    Main class for managing the game.
+
+    Attributes:
+    ----------
+    settings : Settings
+        Game settings, including the number of players, pieces, and additional tiles.
+    playing_field : PlayField
+        The game board object.
+    current_game_state : int
+        The current status of the game.
+    lenght_of_travel : int
+        Length of the path for pieces on the game board.
+    players : list[Player]
+        List of players in the game.
+    player_choice : int
+        Index of the current player.
+    piece_choice : int
+        Index of the selected piece.
+    roll : int
+        Current roll value.
+    at_tempt : int
+        Counter for attempt tracking.
+    in_menu : bool
+        Indicates if the game is currently in the menu.
+    state_text : str
+        Text to display the current game state.
+    """
     settings = None
     playing_field = None
 
@@ -58,6 +92,18 @@ class GameMaster:
     state_text = ""
 
     def __init__(self, player_amount, piece_amount, extra_tiles):
+        """
+        Initializes the GameMaster class, sets up the game field, and prepares players.
+
+        Parameters:
+        ----------
+        player_amount : int
+            The number of players in the game.
+        piece_amount : int
+            The number of pieces each player has.
+        extra_tiles : int
+            Additional tiles on the game board.
+        """
         t.tracer(False)
         self.settings = Settings(player_amount, piece_amount, extra_tiles)
         self.playing_field = PlayField()
@@ -114,6 +160,9 @@ class GameMaster:
 
     # Debug method for randomly placing pieces on the field
     def shuffle_pieces(self):
+        """
+        Randomly places pieces on the game field for debugging purposes.
+        """
         for i in range(self.settings.player_amount):
             for x in range(self.settings.piece_amount):
                 if x != 0:
@@ -129,6 +178,16 @@ class GameMaster:
 
     # Method for kicking pieces from the playing field back into starter houses
     def kick_piece(self, team_to_kick, piece_to_kick):
+        """
+        Sends a piece back to its starting position on the board.
+
+        Parameters:
+        ----------
+        team_to_kick : int
+            The index of the team whose piece is to be moved.
+        piece_to_kick : int
+            The index of the piece to be moved.
+        """
         self.players[team_to_kick].player_pieces[piece_to_kick].move_piece(
             self.playing_field.start_houses[team_to_kick][piece_to_kick].tile_coords)
         self.players[team_to_kick].player_pieces[piece_to_kick].position_in_playing_field = None
@@ -136,6 +195,14 @@ class GameMaster:
 
     # Method for placing piece on the field from the start house
     def initiate_piece(self):
+        """
+        Places a piece on the field from the start house.
+
+        Returns:
+        -------
+        bool
+            True if the piece was successfully placed; False otherwise.
+        """
         self.current_game_state = GAMESTATE_AWAIT
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
@@ -160,6 +227,14 @@ class GameMaster:
 
     # Method for moving pieces on the playing field
     def iterate_trough_field(self, looprange):
+        """
+        Moves a piece across the board tiles.
+
+        Parameters:
+        ----------
+        looprange : int
+            The number of steps to move the piece.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         for i in range(looprange):
@@ -170,6 +245,14 @@ class GameMaster:
 
     # Method for moving pieces inside end houses
     def iterate_trough_house(self, looprange):
+        """
+        Moves a piece within the end houses.
+
+        Parameters:
+        ----------
+        looprange : int
+            The number of steps to move within the house.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         for i in range(looprange):
@@ -178,29 +261,54 @@ class GameMaster:
                 self.playing_field.end_houses[self.player_choice][piece.position_in_house].tile_coords)
 
     def notify_tile_of_peice(self):
+        """
+        Notifies the game field tile of the piece's presence on it.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         self.playing_field.field_tiles[piece.position_in_playing_field].tile_standing_player = self.player_choice
         self.playing_field.field_tiles[piece.position_in_playing_field].tile_standing_piece = self.piece_choice
 
-    def remove_piecefromtile(self):
+    def remove_piece_from_tile(self):
+        """
+        Removes the piece's presence from the current tile on the field.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         self.playing_field.field_tiles[piece.position_in_playing_field].tile_standing_player = None
         self.playing_field.field_tiles[piece.position_in_playing_field].tile_standing_piece = None
 
     def notify_house_of_piece(self):
+        """
+        Notifies the end house of the piece's presence on it.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         self.playing_field.end_houses[self.player_choice][piece.position_in_house].tile_standing_piece = self.piece_choice
 
-    def remove_piecefromhouse(self):
+    def remove_piece_from_house(self):
+        """
+        Removes the piece's presence from its current position within the end house.
+        """
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
 
         self.playing_field.end_houses[self.player_choice][piece.position_in_house].tile_standing_piece = None
 
     # Method with logic and rules for moving pieces.
     def perform_movement(self, roll):
+        """
+        Executes the logic for moving a piece based on the roll.
+
+        Parameters:
+        ----------
+        roll : int
+            The number of steps to move the piece.
+
+        Returns:
+        -------
+        int
+            Status code representing the result of the move (e.g., success, out of bounds, tile occupied).
+        """
         self.current_game_state = GAMESTATE_AWAIT
 
         piece = self.players[self.player_choice].player_pieces[self.piece_choice]
@@ -237,7 +345,7 @@ class GameMaster:
 
                 return MOVESTATE_TILEOCCUPIED
 
-            self.remove_piecefromhouse()
+            self.remove_piece_from_house()
             self.iterate_trough_field(house_difference)
             self.iterate_trough_house(roll - house_difference)
             self.notify_house_of_piece()
@@ -246,7 +354,7 @@ class GameMaster:
             piece.is_in_house = True
             return MOVESTATE_SUCCESS
 
-        self.remove_piecefromtile()
+        self.remove_piece_from_tile()
         difference = (piece.position_in_playing_field + roll) - \
             (self.lenght_of_travel - 1)
         difference = max(0, difference)
@@ -294,5 +402,8 @@ class GameMaster:
         return MOVESTATE_SUCCESS
 
     def refresh_ui(self):
+        """
+        Refreshes the game UI to display the current state and player details.
+        """
         Renderer().refresh_ui(self.playing_field.canvas_size[1], self.settings.player_names[self.player_choice],
                               self.piece_choice, self.roll, game_font[1], self.settings.player_names, self.state_text)

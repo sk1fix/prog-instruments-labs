@@ -4,6 +4,18 @@ from offsetfunc import *
 
 
 class Renderer:
+    """
+    Class responsible for rendering game visuals, including pieces, highlights, and UI elements.
+
+    Attributes:
+    ----------
+    rendering_turtle : Turtle
+        Turtle used for drawing game pieces.
+    writing_turtle : Turtle
+        Turtle used for displaying text on the screen.
+    click_select_turtle : Turtle
+        Turtle used for highlighting selected pieces.
+    """
     rendering_turtle = t.Turtle()
     writing_turtle = t.Turtle()
     click_select_turtle = t.Turtle()
@@ -15,7 +27,20 @@ class Renderer:
     # Draws a dot on the given coordinate with the given color offset by 0.5 on both axis
     # this resutls in the dot being drawn at the center of the coordinate.
     def render(self, color, input_tuple, dot_size, symbol):
+        """
+        Draws a dot or symbol at a specified coordinate with a given color and size.
 
+        Parameters:
+        ----------
+        color : str or tuple
+            Color to fill the symbol.
+        input_tuple : tuple
+            (x, y) coordinates where the symbol will be drawn.
+        dot_size : int
+            Size of the dot.
+        symbol : str
+            Type of symbol to draw ("plus", "star", or "questionmark").
+        """
         self.rendering_turtle.penup()
         self.rendering_turtle.hideturtle()
         self.rendering_turtle.speed(6)
@@ -71,6 +96,14 @@ class Renderer:
             self.rendering_turtle.penup()
 
     def init_highlight(self, dot_size):
+        """
+        Initializes the highlight cursor for selecting pieces.
+
+        Parameters:
+        ----------
+        dot_size : int
+            Size of the highlight indicator.
+        """
         self.click_select_turtle.shape("circle")
         self.click_select_turtle.color("orange")
         self.click_select_turtle.hideturtle()
@@ -78,15 +111,46 @@ class Renderer:
         self.click_select_turtle.turtlesize(dot_size / 17)
 
     def highlight(self, position):
+        """
+        Shows the highlight cursor at the given position.
+
+        Parameters:
+        ----------
+        position : tuple
+            (x, y) coordinates to move the highlight cursor to.
+        """
         t.tracer(False)
         self.click_select_turtle.showturtle()
         self.click_select_turtle.goto(position)
         t.tracer(True)
 
     def hide_highlight(self):
+        """
+        Hides the highlight cursor.
+        """
         self.click_select_turtle.hideturtle()
 
     def refresh_ui(self, canvas_size, player_name, piece_chosen, roll, font_size, name_list, state_text):
+        """
+        Refreshes and updates the user interface with the latest game information.
+
+        Parameters:
+        ----------
+        canvas_size : int
+            Size of the canvas.
+        player_name : str
+            Name of the current player.
+        piece_chosen : int
+            Index of the selected piece.
+        roll : int
+            The result of the latest dice roll.
+        font_size : int
+            Font size for text.
+        name_list : list[str]
+            List of player names.
+        state_text : str
+            Text representing the current game state.
+        """
         t.tracer(False)
         font = ('Arial', font_size, 'normal')
         name_font = ('Arial', font_size, 'bold')
