@@ -4,6 +4,7 @@ from Settings import *
 from Renderer import *
 from PlayField import *
 from Player import *
+from constants import *
 
 win = t.Screen()
 canvas = win.getcanvas()
@@ -23,17 +24,6 @@ def recreate_screen():
     t.Screen().clear()
     t.colormode(255)
     win.bgcolor(bgcolor)
-
-
-GAMESTATE_AWAIT = -1
-GAMESTATE_READY = 0
-GAMESTATE_GETPIECEOUT = 1
-GAMESTATE_ROLL = 2
-GAMESTATE_MOVE = 3
-
-MOVESTATE_SUCCESS = 0
-MOVESTATE_OUTOFBOUNDS = 1
-MOVESTATE_TILEOCCUPIED = 2
 
 
 def reset_state():
@@ -72,7 +62,7 @@ class GameMaster:
         self.settings = Settings(player_amount, piece_amount, extra_tiles)
         self.playing_field = PlayField()
 
-        self.playing_field.generatefield(
+        self.playing_field.generate_field(
             self.settings.extra_tiles, window_size)
         self.lenght_of_travel = len(self.playing_field.field_tiles)
         win.setworldcoordinates(
