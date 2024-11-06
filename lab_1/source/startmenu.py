@@ -1,6 +1,10 @@
 import sys
 
-from inputs import *
+from tkinter import Button, Label, CENTER
+
+from inputs import InputSystem
+from inputs import window_size, win
+from gamemaster import font_size_factor
 
 
 menu_font = ('Arial', int(window_size / font_size_factor), 'normal')

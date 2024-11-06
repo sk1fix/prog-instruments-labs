@@ -1,4 +1,4 @@
-from Tile import *
+from Tile import Tile
 
 
 class PlayField:

@@ -1,6 +1,6 @@
 import turtle as t
 
-from offsetfunc import *
+from offsetfunc import off_set_to_center
 
 
 class Renderer:

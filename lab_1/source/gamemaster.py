@@ -1,10 +1,13 @@
 import random
 
-from Settings import *
-from Renderer import *
-from PlayField import *
-from Player import *
-from constants import *
+import turtle as t
+
+from Settings import Settings
+from Renderer import Renderer
+from PlayField import PlayField
+from Player import Player
+from constants import GAMESTATE_AWAIT, MOVESTATE_SUCCESS, MOVESTATE_OUTOFBOUNDS, MOVESTATE_TILEOCCUPIED
+
 
 win = t.Screen()
 canvas = win.getcanvas()

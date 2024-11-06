@@ -1,6 +1,7 @@
-from tkinter import *
+from tkinter import Button, Entry, Label, Toplevel, CENTER
 
-from gamemaster import *
+from gamemaster import GameMaster
+from gamemaster import win, window_size
 
 
 class InputSystem:
