@@ -1,6 +1,8 @@
 import json
 import csv
-import constants
+import re
+
+from constants import CSV_PATH, REGEX_PATH, RESULT_PATH
 
 
 def read_json(path: str) -> dict:
@@ -70,5 +72,24 @@ def write_json_file(path: str, data: dict) -> None:
         raise e
 
 
-if __name__ == "__main__":
-    pass
+def validate_data(data: list[list[str]], regex: dict) -> list[int]:
+    """
+    Checks rows from a CSV file for compliance with regular expressions.
+
+    Args:
+        data (list[list[str]]): List of rows from the CSV file.
+        regex (dict): Dictionary of regular expressions for validation.
+
+    Returns:
+        list[int]: List of row numbers that failed validation.
+    """
+    invalid_rows = []
+
+    for row_number, row in enumerate(data):
+        for col_index, (field, key) in enumerate(zip(row, regex.keys())):
+            pattern = regex[key]
+            if not re.fullmatch(pattern, field):
+                invalid_rows.append(row_number)
+                break 
+
+    return invalid_rows

@@ -2,6 +2,9 @@ import json
 import hashlib
 from typing import List
 
+from functions import read_csv, read_json, validate_data, write_json_file
+from constants import CSV_PATH, REGEX_PATH, RESULT_PATH
+
 """
 В этом модуле обитают функции, необходимые для автоматизированной проверки результатов ваших трудов.
 """
@@ -42,5 +45,18 @@ def serialize_result(variant: int, checksum: str) -> None:
 
 
 if __name__ == "__main__":
-    print(calculate_checksum([1, 2, 3]))
-    print(calculate_checksum([3, 2, 1]))
+    csv_data = read_csv(CSV_PATH)
+    regex_patterns = read_json(REGEX_PATH)
+
+    invalid_rows = validate_data(csv_data, regex_patterns)
+
+    checksum = calculate_checksum(invalid_rows)
+
+    result = {
+        "variant": 32,  
+        "checksum": checksum
+    }
+    write_json_file(RESULT_PATH, result)
+
+    print(f"Невалидные строки: {invalid_rows}")
+    print(f"Контрольная сумма: {checksum}")
