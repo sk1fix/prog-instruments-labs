@@ -81,4 +81,3 @@ def get_usd3(path: str, path1: str) -> None:
             current_datef = begining_datef-datetime.timedelta(days=1)
             begining_datef = current_datef-datetime.timedelta(days=6)
             index = 6
-

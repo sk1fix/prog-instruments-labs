@@ -70,5 +70,3 @@ def get_usd2(path: str, path1: str) -> None:
         with open(path1 + "/" + get_normalname(str(begining_datef)) + "_" + get_normalname(str(current_datef)) + '.csv', 'a', newline='', encoding="utf-8") as file:
             wr = csv.writer(file)
             wr.writerow(row[0].split(',') + row[1].split(','))
-
-
