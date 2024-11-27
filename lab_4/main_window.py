@@ -1,16 +1,20 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
+import logging
 
 from function import get_usd
 from function1 import get_usd1
 from function2 import get_usd2
 from function3 import get_usd3
+from log_setup import get_log
 
 
 class Window(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
+        get_log()
+        logging.info("The main application window is initialized")
         self.folderpath = None
         self.menu = None
         self.main_date = None
@@ -46,20 +50,26 @@ class Window(QtWidgets.QMainWindow):
         """
         self.folderpath = QtWidgets.QFileDialog.getExistingDirectory(
             self, 'Выберите папку')
-        QtWidgets.QMessageBox.information(
-            self, 'Папка выбрана', self.folderpath)
-        self.folderpath += "/data.csv"
+        if self.folderpath:
+            logging.info(f"Folder selected: {self.folderpath}")
+            QtWidgets.QMessageBox.information(
+                self, 'Папка выбрана', self.folderpath)
+            self.folderpath += "/data.csv"
+        else:
+            logging.info("The folder was not selected")
 
     def get_date(self) -> None:
         """
             choosing a date and receiving a subsequent course
         """
         if not self.folderpath:
+            logging.warning("Trying to get data without selecting a folder")
             QtWidgets.QMessageBox.warning(
                 self, 'Ошибка', 'Выберите папку с исходным файлом')
             return
 
         main_date = self.date_input.date().toString(QtCore.Qt.ISODate)
+        logging.info(f"Date selected: {main_date}")
         self.find_course(main_date)
 
     def create_dataset(self) -> None:
@@ -67,6 +77,8 @@ class Window(QtWidgets.QMainWindow):
             selecting a folder for a new dataset
         """
         if not self.folderpath:
+            logging.warning(
+                "Trying to create a dataset without selecting the source folder")
             QtWidgets.QMessageBox.warning(
                 self, 'Ошибка', 'Выберите папку с исходным датасетом')
             return
@@ -74,6 +86,8 @@ class Window(QtWidgets.QMainWindow):
         self.destination_folder = QtWidgets.QFileDialog.getExistingDirectory(
             self, 'Выберите папку для нового датасета')
         if self.destination_folder:
+            logging.info(
+                f"The folder for the new dataset is selected: {self.destination_folder}")
             self.menu = SubWindow(self)
             self.menu.show()
 
@@ -83,9 +97,11 @@ class Window(QtWidgets.QMainWindow):
         """
         course = get_usd(main_date, self.folderpath)
         if course == None:
+            logging.info(f"Course on {main_date} not found")
             QtWidgets.QMessageBox.information(
                 self, 'Данные не получены', f'Курса доллара на {main_date} нет')
         else:
+            logging.info("Course for {main_date}: {course} rubles")
             QtWidgets.QMessageBox.information(self, 'Данные получены',
                                               f'Курс доллара на {main_date} равен {course} руб')
 
@@ -97,7 +113,8 @@ class SubWindow(QtWidgets.QDialog):
         self.main_window = Main
         if Main is not None:
             self.Main = Main
-
+        logging.info(
+            "The child window of the application has been initialized")
         layout = QtWidgets.QVBoxLayout()
 
         self.button1 = QtWidgets.QPushButton("Разделить на X и Y")
@@ -117,6 +134,7 @@ class SubWindow(QtWidgets.QDialog):
         """
             creating x and y datasets
         """
+        logging.info("Creating a dataset: X and Y")
         get_usd1(self.main_window.folderpath,
                  self.main_window.destination_folder)
         QtWidgets.QMessageBox.information(self, 'Датасет создан')
@@ -126,6 +144,7 @@ class SubWindow(QtWidgets.QDialog):
         """
             creating a dataset by year
         """
+        logging.info("Creating a dataset by year")
         get_usd2(self.main_window.folderpath,
                  self.main_window.destination_folder)
         QtWidgets.QMessageBox.information(self, 'Датасет создан')
@@ -135,6 +154,7 @@ class SubWindow(QtWidgets.QDialog):
         """
             creating a dataset by week
         """
+        logging.info("Сreating a dataset by week")
         get_usd3(self.main_window.folderpath,
                  self.main_window.destination_folder)
         QtWidgets.QMessageBox.information(self, 'Датасет создан')
@@ -142,6 +162,8 @@ class SubWindow(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
+    get_log()
+    logging.info("The app is running")
     app = QtWidgets.QApplication(sys.argv)
     window = Window()
     window.show()
