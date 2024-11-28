@@ -1,15 +1,29 @@
 import datetime
 import csv
+import logging
+
+from log_setup import get_log
 
 
 def get_usd(my_date: datetime.date, path: str) -> str:
-    f = open(path, 'r')
-    s = csv.reader(f)
-    for row in s:
-        if str(row[0][10:20]) == str(my_date):
-            return (row[1][30:])
-        if str(my_date) > row[0][10:20]:
-            return None
+    get_log()
+    logging.info(
+        f"Looking for the USD exchange rate on the {my_date} date in the {path} file")
+    try:
+        with open(path, 'r') as f:
+            s = csv.reader(f)
+            for row in s:
+                if str(row[0][10:20]) == str(my_date):
+                    logging.info(f"Course found: {row[1][30:]}")
+                    return row[1][30:]
+                if str(my_date) > row[0][10:20]:
+                    logging.warning(
+                        "The exchange rate for the specified date was not found")
+                    return None
+    except FileNotFoundError:
+        logging.error(f"The {path} file was not found")
+    except Exception as e:
+        logging.error(f"Error processing the {path} file: {e}")
 
 
 def get_usd_XY(my_date: datetime.date) -> str:

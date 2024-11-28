@@ -1,12 +1,15 @@
 import logging
 
+from constants import FILEPATH
+
 
 def get_log():
 
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] [%(funcName)s] %(message)s',
-        handlers={logging.StreamHandler()}
+        handlers={logging.StreamHandler(), logging.FileHandler(
+            FILEPATH, encoding="utf-8")}
     )
 
 

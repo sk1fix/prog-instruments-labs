@@ -101,7 +101,7 @@ class Window(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.information(
                 self, 'Данные не получены', f'Курса доллара на {main_date} нет')
         else:
-            logging.info("Course for {main_date}: {course} rubles")
+            logging.info(f"Course for {main_date}: {course} rubles")
             QtWidgets.QMessageBox.information(self, 'Данные получены',
                                               f'Курс доллара на {main_date} равен {course} руб')
 
