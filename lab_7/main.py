@@ -15,8 +15,14 @@ intents.messages = True
 intents.message_content = True
 intents.reactions = True
 
+
 class MyClient(discord.Client):
     def __init__(self, **kwargs):
+        """
+        Initializes the Discord client, sets up reaction roles and the channel name for messages.
+
+        :param kwargs: Arguments for the Discord client.
+        """
         super().__init__(**kwargs)
         self.role_by_reaction = {
             "<:Iron_3_Rank:1194288576742051952>": ("iron", discord.Color.dark_gray()),
@@ -30,7 +36,11 @@ class MyClient(discord.Client):
         }
         self.chanel_name = 'test'
 
-    async def send_reaction_message(self):
+    async def send_reaction_message(self) -> None:
+        """
+        Sends a message in the channel with emojis for reactions to assign roles.
+        Creates an embed message with emojis corresponding to roles.
+        """
         guild = discord.utils.get(self.guilds)
         if not guild:
             return
@@ -54,7 +64,13 @@ class MyClient(discord.Client):
         for emoji in self.role_by_reaction.keys():
             await message.add_reaction(emoji)
 
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
+        """
+        Handles the event when a reaction is added to a message.
+        Grants the role to the user if the emoji matches a role.
+
+        :param payload: The reaction event data.
+        """
         guild = self.get_guild(payload.guild_id)
         if not guild:
             return
@@ -78,7 +94,13 @@ class MyClient(discord.Client):
             if role not in member.roles:
                 await member.add_roles(role)
 
-    async def on_raw_reaction_remove(self, payload):
+    async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent) -> None:
+        """
+        Handles the event when a reaction is removed from a message.
+        Removes the role from the user if it was assigned via a reaction.
+
+        :param payload: The reaction event data.
+        """
         guild = self.get_guild(payload.guild_id)
         if not guild:
             return
@@ -95,10 +117,20 @@ class MyClient(discord.Client):
             if role and role in member.roles:
                 await member.remove_roles(role)
 
-    async def on_ready(self):
-        await self.send_reaction_message()  
+    async def on_ready(self) -> None:
+        """
+        Called when the bot successfully connects to the Discord server.
+        Sends a message with reactions for role assignments.
+        """
+        await self.send_reaction_message()
 
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member) -> None:
+        """
+        Called when a new member joins the server.
+        Sends a welcome message to the specified channel.
+
+        :param member: The new member who joined the server.
+        """
         channel = discord.utils.get(
             member.guild.text_channels, name=self.chanel_name)
         if channel:
@@ -106,7 +138,13 @@ class MyClient(discord.Client):
             if gif_url:
                 await channel.send(f"Добро пожаловать, {member.mention}!", embed=discord.Embed().set_image(url=gif_url))
 
-    async def get_random_gif(self, query):
+    async def get_random_gif(self, query: str) -> str | None:
+        """
+        Fetches a random GIF from the Giphy API based on the query.
+
+        :param query: The query for searching a GIF.
+        :return: A URL to the GIF or None if no GIF is found.
+        """
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(f"https://api.giphy.com/v1/gifs/search?q={query}&api_key={API_KEY}&limit=10") as response:
